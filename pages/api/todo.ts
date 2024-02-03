@@ -14,7 +14,7 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     try{
-      const todo = await show(1);
+      const todo = await show();
       res.status(200).json({ messsage: "Sukes Mengambil data", data: todo });
     } catch (err) {
       res.status(404).json({ messsage: (err as Error).message });

@@ -16,4 +16,6 @@ model todos {
   todo String
   description String
   status String @default("created")
+  createdAt          DateTime  @default(now()) 
+  updatedAt          DateTime  @updatedAt 
 }

@@ -1,4 +1,12 @@
 export default function Table(props) {
+  
+  const updateTodo = async (id, status) => {
+    let index = props.data.findIndex((todo) => todo.id = id);
+    props.data[index].status = status == 'done' ? 'created' : 'done';
+    console.log(props.data[index].status);
+
+  }
+  
   return (
     <div className="overflow-x-auto">
       <table className="table">
@@ -11,59 +19,30 @@ export default function Table(props) {
               </label>
             </th>
             <th>Todo</th>
+            <th>Decription</th>
           </tr>
         </thead>
         <tbody>
-          {/* row 1 */}
-          <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="radio" />
-              </label>
-            </th>
-            <td>
-              <div className="flex items-center gap-3">
-                <div>
-                  <div className="font-bold">Hart Hagerty</div>
-                  <div className="text-sm opacity-50">United States</div>
+
+          {props.data.map((todo) => (
+            <tr key={todo.id} className={todo.status == 'done' ? 'line-through bg-lime-800' : ''}>
+              <th>
+                <label>
+                  <input type="checkbox" checked={todo.status == 'done' ? true : false} onChange={() => updateTodo(todo.id, todo.status)} className="radio" />
+                </label>
+              </th>
+              <td>
+                <div className="flex items-center gap-3">
+                  <div>
+                    <div className="font-bold" >{todo.todo}</div>
+                    <div className="text-sm opacity-50">{todo.status}</div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          {/* row 2 */}
-          <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="radio" />
-              </label>
-            </th>
-            <td>
-              <div className="flex items-center gap-3">
-                <div>
-                  <div className="font-bold">Brice Swyre</div>
-                  <div className="text-sm opacity-50">China</div>
-                </div>
-              </div>
-            </td>
-        </tr>
-          {/* row 3 */}
-          <tr>
-            <th>
-              <label>
-                <input type="checkbox" className="radio" />
-              </label>
-            </th>
-            <td>
-              <div className="flex items-center gap-3">
-                <div>
-                  <div className="font-bold">Marjy Ferencz</div>
-                  <div className="text-sm opacity-50">Russia</div>
-                </div>
-              </div>
-            </td>
+              </td>
+              <td className="whitespace-nowrap"> {todo.description}</td>
             </tr>
-          {/* row 4 */}
-    </tbody>
+          ))}
+        </tbody>
         {/* foot */}
       </table>
     </div>
