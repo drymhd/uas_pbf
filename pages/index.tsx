@@ -4,22 +4,18 @@ import styles from "../styles/Home.module.css";
 import { useState, useEffect } from 'react'
 import Card from "../components/layout/Card";
 
-import { fetchTodosAsync, addTodoAsync } from "../redux/slices/todo";
+import { fetchTodosAsync, addTodoAsync, resetTodo, updateAsync } from "../redux/slices/todo";
 import { useDispatch, useSelector } from "react-redux";
-import { Input, Button, Checkbox } from 'react-daisyui';
-
-import { show } from "../services/todoService";
-import { componentShapes } from "react-daisyui/dist/constants";
 
 
 export default function Home() {
   const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos.todos);
-
 
   useEffect(() => {
     // Dispatch fetchTodosAsync when the component mounts
     dispatch(fetchTodosAsync());
+
+    
   }, [dispatch]);
 
 
@@ -33,7 +29,7 @@ export default function Home() {
         <Form />
       </Card>
       <Card title="Todo" actionButtonLabel={"Todo"} secondaryButtonLabel={"Hello World"}>
-        <Table data={todos} />
+        <Table/>
       </Card>
 
     </div>
@@ -42,13 +38,34 @@ export default function Home() {
 };
 
 const Form = function () {
-  const [form, setForm] = useState({ todo: '', description: ''});
-  const dispatch = useDispatch();
-  const addTodo = (event) => {
-    event.preventDefault();
-    dispatch(addTodoAsync(form));
+  const todo = useSelector((state) => state.todos.todo);
 
-    setForm({ todo: '', description: '' });
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [id, setId] = useState(null);
+  const [form, setForm] = useState({ todo: '', description: '', id: null });
+
+
+  useEffect(() => {
+    if (todo) {
+      setForm({ ...form, todo: todo.todo, description: todo.description, id: todo.id });
+      setId(todo.id);
+      setIsUpdate(true);
+    } else {
+      setForm({ todo: '', description: '', id: null });
+      setId(null);
+      setIsUpdate(false);
+    }
+  }, [todo]);
+  const dispatch = useDispatch();
+  const submitTodo = (event) => {
+    event.preventDefault();
+    if(isUpdate) {
+      dispatch(updateAsync(form));
+    }  else {
+      dispatch(addTodoAsync(form));
+    }
+
+    setForm({ todo: '', description: '', id: null });
   };
 
   const removeTodo = (index) => {
@@ -57,12 +74,14 @@ const Form = function () {
 
   return (
 
-    <form action="#" onSubmit={addTodo}>
+    <form action="#" onSubmit={submitTodo}>
       <label className="form-control w-full">
         <div className="label">
           <span className="label-text">Todo?</span>
         </div>
         <input type="text" placeholder="Type here" className="input input-bordered w-full p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value={form.todo} 
+        required
+          
           onChange={(e) => setForm({ ...form, todo: e.target.value })}/>
       </label>
 
@@ -71,6 +90,7 @@ const Form = function () {
           <span className="label-text">Description?</span>
         </div>
         <textarea
+          required
           placeholder="Type something meaningful here..."
           className="textarea input-bordered w-full resize-none rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           rows={5}
@@ -81,7 +101,8 @@ const Form = function () {
         ></textarea>
       </label>
 
-      <button className="btn btn-primary mt-2" type="submit">Add</button>
+      <button className="btn btn-primary mt-2 mr-2 " type="submit">{isUpdate ? 'Update' : 'Add'}</button>
+      {isUpdate && <button className="btn btn-primary mt-2 mr-2 "  onClick={() => dispatch(resetTodo(null))} type="button">Cancel</button>}
 
     </form>
   );

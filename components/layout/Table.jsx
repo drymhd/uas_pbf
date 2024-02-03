@@ -1,8 +1,12 @@
-import { useDispatch } from "react-redux";
-import { updateStatusAsync } from "../../redux/slices/todo";
+import { useDispatch, useSelector } from "react-redux";
+import { updateStatusAsync, getTodoAsync, deleteTodosAsync } from "../../redux/slices/todo";
 export default function Table(props) {
 
 const dispatch = useDispatch();
+
+const todos = useSelector((state) => state.todos.todos);
+
+
 
   const updateTodo = async (id, status) => {
     dispatch(updateStatusAsync(id));
@@ -16,16 +20,17 @@ const dispatch = useDispatch();
           <tr style={{ textAlign: 'left', width: '10%' }}>
             <th>
               <label>
-                Action
+                #
               </label>
             </th>
             <th style={{ width: '50%' }}>Todo</th>
             <th>Decription</th>
+            <th style={{ width: '10%' }}>Action</th>
           </tr>
         </thead>
         <tbody>
 
-          {props.data.map((todo) => (
+          {todos.map((todo) => (
             <tr key={todo.id} className={todo.status == 'done' ? 'line-through bg-lime-800' : ''}>
               <th>
                 <label>
@@ -41,6 +46,9 @@ const dispatch = useDispatch();
                 </div>
               </td>
               <td className="whitespace-nowrap"> {todo.description}</td>
+              <td>
+                <Action todo={todo} />
+                </td>
             </tr>
           ))}
         </tbody>
@@ -48,4 +56,30 @@ const dispatch = useDispatch();
       </table>
     </div>
   );
+}
+
+
+
+const Action = (props) => {
+  const {todo} = props;
+
+  const dispatch = useDispatch();
+
+  const edit = async (id) => {
+    dispatch(getTodoAsync(id));
+  }
+
+
+  if(todo.status != 'done') {
+    return (
+      <div>
+        <button className="btn btn-ghost" onClick={() => edit(todo.id)}>Edit</button>
+        <button className="btn btn-ghost" onClick={() => dispatch(deleteTodosAsync(todo.id))}>Delete</button>
+      </div>
+    )
+  } else {
+    return (
+      <></>
+    );
+  }
 }
