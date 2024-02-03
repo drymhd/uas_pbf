@@ -8,7 +8,7 @@ const MyCard = ({
   secondaryButtonLabel,
 }) => {
   return (
-    <Card>
+    <Card className="m-3">
       <Card.Body>
         <Card.Title>{title}</Card.Title>
         {children}

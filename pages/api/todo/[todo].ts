@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { show, updateStatus, store } from "../../services/todoService";
-import type Todo from "../../model/todo";
+import { show, updateStatus, store } from "../../../services/todoService";
+import type Todo from "../../../model/todo";
 
 type Data = {
   messsage: string;
@@ -12,9 +12,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  const id = req.query.todo
+
   if (req.method === "GET") {
+
     try{
-      const todo = await show();
+      const todo = await show(id);
       res.status(200).json({ messsage: "Sukes Mengambil data", data: todo });
     } catch (err) {
       res.status(404).json({ messsage: (err as Error).message });

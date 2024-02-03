@@ -1,10 +1,11 @@
+import { useDispatch } from "react-redux";
+import { updateStatusAsync } from "../../redux/slices/todo";
 export default function Table(props) {
-  
-  const updateTodo = async (id, status) => {
-    let index = props.data.findIndex((todo) => todo.id = id);
-    props.data[index].status = status == 'done' ? 'created' : 'done';
-    console.log(props.data[index].status);
 
+const dispatch = useDispatch();
+
+  const updateTodo = async (id, status) => {
+    dispatch(updateStatusAsync(id));
   }
   
   return (
@@ -12,13 +13,13 @@ export default function Table(props) {
       <table className="table">
         {/* head */}
         <thead>
-          <tr>
+          <tr style={{ textAlign: 'left', width: '10%' }}>
             <th>
               <label>
                 Action
               </label>
             </th>
-            <th>Todo</th>
+            <th style={{ width: '50%' }}>Todo</th>
             <th>Decription</th>
           </tr>
         </thead>
